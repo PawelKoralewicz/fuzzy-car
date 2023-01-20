@@ -1,0 +1,10 @@
+body{
+    margin: 0;
+    background-color: #26983d;
+    overflow: hidden;
+    text-align: center;
+}
+
+#asfalt{
+    background: rgb(106, 106, 106);
+}
