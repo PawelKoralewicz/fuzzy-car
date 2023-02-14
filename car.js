@@ -1,5 +1,5 @@
 class Car {
-  constructor(x, y, width, height, controlType, maxSpeed = 3) {
+  constructor(x, y, width, height, controlType) {
     this.x = x;
     this.y = y;
     this.width = width;
@@ -7,20 +7,22 @@ class Car {
 
     this.speed = 0;
     this.acceleration = 0.2;
-    this.maxSpeed = maxSpeed;
     this.friction = 0.05;
     this.angle = 0;
     this.damaged = false;
-    this.breakGentle = 0.2;
-    this.breakHard = 1;
-    this.offset = 2;
+    this.controls = new Controls(controlType);
 
     if (controlType !== "DUMMY") {
       this.sensors = new Sensors(this);
+      this.offset = this.sensors.getFrontOffset();
+      this.leftOffset = this.sensors.getLeftOffset();
+      this.rightOffset = this.sensors.getRightOffset();
+      this.maxSpeed = 3;
+    } else {
+      this.maxSpeed = Math.random() * 2 + 1;
     }
-    this.controls = new Controls(controlType);
   }
-
+  
   update(roadBorders, traffic) {
     if (!this.damaged) {
       this.#move();
@@ -29,8 +31,21 @@ class Car {
     }
     if (this.sensors) {
       this.sensors.update(roadBorders, traffic);
-      this.offset = this.sensors.getOffset();
-      console.log(this.offset);
+      this.offset = this.sensors.getFrontOffset();
+      this.leftOffset = this.sensors.getLeftOffset();
+      this.rightOffset = this.sensors.getRightOffset();
+      if(this.offset !== undefined){
+        if(this.leftOffset !== undefined && this.rightOffset === undefined){
+          let angle = this.controls.fuzzifyAngle(this.offset * 100);
+          this.angle -= angle/100;
+        } else if (this.leftOffset === undefined && this.rightOffset !== undefined){
+          let angle = this.controls.fuzzifyAngle(this.offset * 100);
+          this.angle += angle/100;
+        } else if (this.leftOffset !== undefined && this.rightOffset !== undefined){
+          let speed = this.controls.fuzzifySpeed(this.offset * 100);
+          this.maxSpeed = speed/10;
+        }
+      }
     }
   }
 
@@ -53,11 +68,11 @@ class Car {
     const rad = Math.hypot(this.width, this.height) / 2;
     const alpha = Math.atan2(this.width, this.height);
     points.push({
-      x: this.x - (Math.sin(this.angle - alpha) * rad) / 1.2,
+      x: this.x - (Math.sin(this.angle - alpha) * rad),
       y: this.y - Math.cos(this.angle - alpha) * rad,
     });
     points.push({
-      x: this.x - (Math.sin(this.angle + alpha) * rad) / 1.2,
+      x: this.x - (Math.sin(this.angle + alpha) * rad),
       y: this.y - Math.cos(this.angle + alpha) * rad,
     });
     points.push({
@@ -78,15 +93,6 @@ class Car {
     if (this.controls.reverse) {
       this.speed -= this.acceleration;
     }
-    if (this.speed !== 0) {
-      const flip = this.speed > 0 ? 1 : -1;
-      if (this.controls.right) {
-        this.angle -= 0.01 * flip;
-      }
-      if (this.controls.left) {
-        this.angle += 0.01 * flip;
-      }
-    }
     if (this.speed > this.maxSpeed) {
       this.speed = this.maxSpeed;
     }
@@ -101,9 +107,6 @@ class Car {
     }
     if (Math.abs(this.speed) < this.friction) {
       this.speed = 0;
-    }
-    if(this.offset < 1 && this.offset > 0.8){
-        this.speed -= this.breakGentle;
     }
 
     this.x -= Math.sin(this.angle) * this.speed;

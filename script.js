@@ -3,9 +3,15 @@ asfalt.width = 250;
 
 const ctx = asfalt.getContext("2d");
 const controls = new Controls();
+
 const road = new Road(asfalt.width / 2, asfalt.width * 0.9);
-const car = new Car(road.getLaneCntr(0), 300, 40, 55, "KEYS", controls.maxSpeed);
-const traffic = [new Car(road.getLaneCntr(0), 100, 40, 55, "DUMMY", 2)];
+const car = new Car(road.getLaneCntr(0), 300, 40, 55, "KEYS");
+const traffic = [new Car(road.getLaneCntr(0), 0, 40, 55, "DUMMY")];
+for (let i = 0; i<10; i++){
+  let randomLane = Math.floor(Math.random() * 3);
+  let randomCrd = Math.floor(Math.random() * -2000) - 250;
+  traffic.push(new Car(road.getLaneCntr(randomLane), randomCrd, 40, 55, "DUMMY"));
+}
 
 animate();
 

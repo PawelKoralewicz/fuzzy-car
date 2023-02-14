@@ -2,8 +2,8 @@ class Sensors {
   constructor(car) {
     this.car = car;
     this.rayCount = 3;
-    this.rayLength = 220;
-    this.raySpread = Math.PI / 3;
+    this.rayLength = 230;
+    this.raySpread = Math.PI / 4;
 
     this.rays = [];
     this.readings = [];
@@ -57,7 +57,6 @@ class Sensors {
         );
         if (value) {
           touches.push(value);
-          //   console.log(value.offset);
           return value;
         }
       }
@@ -79,44 +78,36 @@ class Sensors {
         end = this.readings[i];
       }
       ctx.beginPath();
-      ctx.lineWidth = 2;
+      ctx.lineWidth = 3;
       ctx.strokeStyle = "silver";
       ctx.moveTo(this.rays[i][0].x, this.rays[i][0].y);
       ctx.lineTo(end.x, end.y);
       ctx.stroke();
 
       ctx.beginPath();
-      ctx.lineWidth = 2;
+      ctx.lineWidth = 3;
       ctx.strokeStyle = "red";
       ctx.moveTo(this.rays[i][1].x, this.rays[i][1].y);
       ctx.lineTo(end.x, end.y);
       ctx.stroke();
     }
-    // ctx.lineWidth = 2;
-    // ctx.beginPath();
-    // ctx.strokeStyle = "yellow";
-    // ctx.moveTo(this.rays[0][0].x, this.rays[0][0].y);
-    // ctx.lineTo(this.rays[0][1].x, this.rays[0][1].y);
-    // ctx.stroke();
-
-    // ctx.beginPath();
-    // ctx.lineWidth = 2;
-    // ctx.strokeStyle = "purple";
-    // ctx.moveTo(this.rays[1][0].x, this.rays[0][0].y);
-    // ctx.lineTo(this.rays[1][1].x, this.rays[0][1].y);
-    // ctx.stroke();
-
-    // ctx.beginPath();
-    // ctx.lineWidth = 2;
-    // ctx.strokeStyle = "orange";
-    // ctx.moveTo(this.rays[2][0].x, this.rays[0][0].y);
-    // ctx.lineTo(this.rays[2][1].x, this.rays[0][1].y);
-    // ctx.stroke();
   }
 
-  getOffset(){
+  getFrontOffset(){
     if (this.readings[1]) {
         return this.readings[1].offset;
       }
+  }
+  
+  getLeftOffset(){
+    if(this.readings[0]){
+      return this.readings[0].offset;
+    }
+  }
+
+  getRightOffset(){
+    if(this.readings[2]){
+      return this.readings[2].offset;
+    }
   }
 }
