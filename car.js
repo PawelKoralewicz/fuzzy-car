@@ -45,6 +45,8 @@ class Car {
           let speed = this.controls.fuzzifySpeed(this.offset * 100);
           this.maxSpeed = speed/10;
         }
+      } else {
+        this.maxSpeed = 3;
       }
     }
   }

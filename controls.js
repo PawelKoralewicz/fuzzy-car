@@ -155,7 +155,7 @@ class Controls {
     let y1 = 0;
     let y2 = 0;
     let A0 = [[],[],[],[]];
-    for(let i = 0; i<=90; i++){
+    for(let i = 0; i<=70; i++){
         // R1: if offset=close then angle=big
         A0[0][i]=Math.min(close, this.angleFuzzySet.big.membership(i));
         // R2: if offset=moderate then angle=normal
